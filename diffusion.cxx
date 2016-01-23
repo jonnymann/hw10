@@ -45,7 +45,11 @@ int main(){
   {
    for(int j=0; j<Nk; j++){
 
-
+	   step(u1,u0,dt,dx,D,N);
+	   h=u0;
+	   u0=u1;
+	   u1=h;
+           t=t+dt;
    }
    strm.str("");
    strm << "u_" << i;
@@ -53,7 +57,11 @@ int main(){
   }
 
   cout << "t = " << t << endl;
-
+  cout << "Folgende Faktoren sollte >= 1 sein, um das Neumannstabilitätskriterium zu erfüllen" << endl;
+  cout << "Faktor1 = " << D/2/dx/dx/dt  << "\t" << "aus hw 10" <<endl;
+  cout << "Faktor2 = " << dx*dx/D/2/dt  << "\t" << "aus hw 9" << endl;
+  cout << "Faktor1 hat keinen direkt sichbaren Einfluss, dagegen kommt es bei Unterschreitung" << endl;
+  cout << "von Faktor 2 zu starken Schwingungen, die sich verstärken" << endl;
   delete[] u0;
   delete[] u1;
   return 0;
@@ -63,7 +71,11 @@ void step(double* const f1, double* const f0,
           const double dt, const double dx,
           const double D, const int N)
 {
-
+	double C=D*dt/dx/dx;
+	f1[0]=C*(f0[1]-2*f0[0])+f0[0];
+	for(int i=1;i<N-1;i++)
+		f1[i]=C*(f0[i+1]-2*f0[i]+f0[i-1])+f0[i];
+	f1[N-1]=C*(f0[N-2]-2*f0[N-1])+f0[N-2];
 }
 //-----------------------------------------------
 void initialize(double* const u0, const double dx,
